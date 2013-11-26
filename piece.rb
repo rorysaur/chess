@@ -1,3 +1,6 @@
+class InvalidMoveError < StandardError
+end
+
 class Piece
 
   attr_accessor :color, :pos, :board, :moves
@@ -10,6 +13,18 @@ class Piece
   end
 
   def moves
+    # can't move to square occupied by same color
+  end
+
+  def same_color?(pos)
+    x, y = pos
+    if @board[x, y].nil?
+      false
+    elsif @board[x, y].color == @color
+      true
+    else
+      false
+    end
   end
 
   def valid_moves

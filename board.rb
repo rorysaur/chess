@@ -18,10 +18,19 @@ class Board
 
   def initialize
     @grid = Array.new(8) { Array.new(8, nil) }
-    # place_pieces
+    place_pieces
   end
 
   # private
+  # def place_pieces2
+  #   back_row = [Rook, Knight, Bishop, Queen, King, Bishop, Knight, Rook]
+  #
+  #   back_row.map_with_index do |piece_class, index|
+  #     piece_class.new(color, [0, index], self)
+  #   end
+  #
+  #   8.times { |i| Pawn.new}
+  # end
 
   def place_pieces
 
@@ -92,6 +101,23 @@ class Board
     x.between?(0,7) && y.between?(0,7)
   end
 
+  def move(from, to)
+    from_x, from_y = from
+    to_x, to_y = to
+
+    piece = self[from_x, from_y]
+
+    if piece.nil?
+      raise InvalidMoveError.new("There is no piece at that position.")
+    elsif !piece.moves.include?(to)
+      raise InvalidMoveError.new("Invalid move.")
+    elsif piece.moves.include?(to)
+      self[to_x, to_y] = self[from_x, from_y]
+      self[from_x, from_y] = nil
+      piece.pos = to
+    end
+  end
+
   def dup
     duped_board = Board.new
 
@@ -127,9 +153,13 @@ class Board
 
 end
 
-b = Board.new
-b.place_pieces
-b.display
+# b = Board.new
+# b.place_pieces
+# b.display
+# b.move([7,1], [5,2])
+# b.display
+# b.move([5,2], [6,2])
+# b.display
 
 # p1 = Queen.new([4,4], { :color => :black, :board => b })
 # b[4,4] = p1

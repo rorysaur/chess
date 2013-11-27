@@ -9,20 +9,23 @@ class Piece
     @color = options[:color]
     @pos = pos
     @board = options[:board]
-    @moves = []
   end
 
   def moves
   end
 
+  def occupied?(pos)
+    occupied_same_color?(pos) || occupied_opp_color?(pos)
+  end
+
   def occupied_same_color?(pos)
     x, y = pos
-    @board[x, y] && @board[x, y].color == @color
+    @board[x,y] && @board[x, y].color == @color
   end
 
   def occupied_opp_color?(pos)
     x, y = pos
-    @board[x, y] && @board[x, y].color != @color
+    @board[x,y] && @board[x, y].color != @color
   end
 
   def unoccupied?(pos)
@@ -34,6 +37,16 @@ class Piece
   end
 
   def to_s
+  end
+
+  def show_moves
+    board_copy = @board.dup
+    moves.each do |pos|
+      x, y = pos
+      board_copy[x, y] = "# "
+    end
+
+    board_copy.display
   end
 end
 

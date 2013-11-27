@@ -11,71 +11,24 @@ class Board
     @grid = Array.new(8) { Array.new(8, nil) }
   end
 
-  # private
-  # def place_pieces2
-  #   back_row = [Rook, Knight, Bishop, Queen, King, Bishop, Knight, Rook]
-  #
-  #   back_row.map_with_index do |piece_class, index|
-  #     piece_class.new(color, [0, index], self)
-  #   end
-  #
-  #   8.times { |i| Pawn.new}
-  # end
-
   def place_pieces
+    back_row = [Rook, Knight, Bishop, Queen, King, Bishop, Knight, Rook]
 
-    options = { :color => :white, :board => self }
-
-    [[0,0], [0,7]].each do |pos|
-      x, y = pos
-      self[x, y] = Rook.new(pos, options)
+    back_row.each_with_index do |piece_class, index|
+      self[0, index] = piece_class.new([0, index], :white, self)
     end
 
-    [[0,1], [0,6]].each do |pos|
-      x, y = pos
-      self[x, y] = Knight.new(pos, options)
+    8.times do |y|
+      self[1, y] = Pawn.new([1, y], :white, self)
     end
 
-    [[0,2], [0,5]].each do |pos|
-      x, y = pos
-      self[x, y] = Bishop.new(pos, options)
+    8.times do |y|
+      self [6, y] = Pawn.new([6, y], :black, self)
     end
 
-    self[0,3] = Queen.new([0,3], options)
-
-    self[0,4] = King.new([0,4], options)
-
-    x = 1
-    (0..7).each do |y|
-      self[x, y] = Pawn.new([x,y], options)
+    back_row.each_with_index do |piece_class, index|
+      self[7, index] = piece_class.new([7, index], :black, self)
     end
-
-    options = { :color => :black, :board => self }
-
-    [[7,0], [7,7]].each do |pos|
-      x, y = pos
-      self[x, y] = Rook.new(pos, options)
-    end
-
-    [[7,1], [7,6]].each do |pos|
-      x, y = pos
-      self[x, y] = Knight.new(pos, options)
-    end
-
-    [[7,2], [7,5]].each do |pos|
-      x, y = pos
-      self[x, y] = Bishop.new(pos, options)
-    end
-
-    x = 6
-    (0..7).each do |y|
-      self[x, y] = Pawn.new([x,y], options)
-    end
-
-    self[7,3] = Queen.new([7,3], options)
-
-    self[7,4] = King.new([7,4], options)
-
   end
 
   def [](x, y)
@@ -104,11 +57,11 @@ class Board
     if piece.nil?
       raise InvalidMoveError.new("There is no piece at that position.")
     elsif !piece.moves.include?(to)
+      piece.show_valid_moves
       raise InvalidMoveError.new("Invalid move.")
-      piece.show_valid_moves
     elsif !piece.valid_moves.include?(to)
-      raise InvalidMoveError.new("Can't move into check.")
       piece.show_valid_moves
+      raise InvalidMoveError.new("Can't move into check.")
     elsif piece.valid_moves.include?(to)
       self[to_x, to_y] = self[from_x, from_y]
       self[from_x, from_y] = nil

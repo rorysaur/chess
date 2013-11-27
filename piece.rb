@@ -5,10 +5,10 @@ class Piece
 
   attr_accessor :color, :pos, :board, :moves
 
-  def initialize(pos, options = {})
-    @color = options[:color]
+  def initialize(pos, color, board)
+    @color = color
     @pos = pos
-    @board = options[:board]
+    @board = board
   end
 
   def moves
@@ -35,12 +35,12 @@ class Piece
   end
 
   def dup(board)
-    self.class.new(@pos, { :color => @color, :board => board } )
+    self.class.new(@pos, @color, board)
   end
 
   def show_valid_moves
     board_copy = @board.dup
-    moves.each do |pos|
+    valid_moves.each do |pos|
       x, y = pos
       board_copy[x, y] = "# "
     end

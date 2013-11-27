@@ -1,6 +1,10 @@
+# -*- coding: utf-8 -*-
+
+require_relative './stepping_piece.rb'
+
 class King < SteppingPiece
 
-  DIFFS = [
+  DELTAS = [
     [-1, -1],
     [-1, 0],
     [-1, 1],
@@ -12,6 +16,6 @@ class King < SteppingPiece
   ]
 
   def to_s
-    "K "
+    @color == :white ? "♔ " : "♚ "
   end
 end

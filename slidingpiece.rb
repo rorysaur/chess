@@ -1,3 +1,0 @@
-class SlidingPiece < Piece
-end
-

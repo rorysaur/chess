@@ -1,7 +1,11 @@
-# load 'piece.rb'
+# -*- coding: utf-8 -*-
+
+require_relative './piece.rb'
 
 class Pawn < Piece
+
+
   def to_s
-    "P "
+    @color == :white ? "♙ " : "♟ "
   end
 end

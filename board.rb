@@ -1,16 +1,7 @@
-# load 'pieces.rb'
+load 'pieces.rb'
 
 # -*- coding: utf-8 -*-
 
-load 'piece.rb'
-load 'stepping_piece.rb'
-load 'sliding_piece.rb'
-load 'pawn.rb'
-load 'rook.rb'
-load 'queen.rb'
-load 'bishop.rb'
-load 'knight.rb'
-load 'king.rb'
 
 class Board
 
@@ -51,7 +42,7 @@ class Board
       self[x, y] = Bishop.new(pos, options)
     end
 
-    self[0,3] = Queen.new([0,4], options)
+    self[0,3] = Queen.new([0,3], options)
 
     self[0,4] = King.new([0,4], options)
 
@@ -82,7 +73,7 @@ class Board
       self[x, y] = Pawn.new([x,y], options)
     end
 
-    self[7,3] = Queen.new([7,4], options)
+    self[7,3] = Queen.new([7,3], options)
 
     self[7,4] = King.new([7,4], options)
 
@@ -110,12 +101,27 @@ class Board
     if piece.nil?
       raise InvalidMoveError.new("There is no piece at that position.")
     elsif !piece.moves.include?(to)
+      piece.show_moves
       raise InvalidMoveError.new("Invalid move.")
     elsif piece.moves.include?(to)
       self[to_x, to_y] = self[from_x, from_y]
       self[from_x, from_y] = nil
       piece.pos = to
     end
+  end
+
+  def occupied?(pos, color)
+    occupied_same_color?(pos, color) || occupied_opp_color?(pos, color)
+  end
+
+  def occupied_same_color?(pos, color)
+    x, y = pos
+    self[x,y] && self[x, y].color == color
+  end
+
+  def occupied_opp_color?(pos, color)
+    x, y = pos
+    self[x,y] && self[x, y].color != color
   end
 
   def dup

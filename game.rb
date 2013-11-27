@@ -16,13 +16,13 @@ class Game
         input = gets.chomp
         coords = parse_input(input)
         @board.move(coords.first, coords.last)
-      # rescue ArgumentError => e
-#         # puts "Enter number coordinates."
-#         puts e
-#         retry
-      # rescue InvalidMoveError => e
-      #   puts e
-      #   retry
+      rescue ArgumentError => e
+        # puts "Enter number coordinates."
+        puts e
+        retry
+      rescue InvalidMoveError => e
+        puts e
+        retry
       end
     end
   end
@@ -38,4 +38,4 @@ class Game
 
 end
 
-Game.new.play
+# Game.new.play

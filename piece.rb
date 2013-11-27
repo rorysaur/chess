@@ -14,25 +14,6 @@ class Piece
   def moves
   end
 
-  def occupied?(pos)
-    occupied_same_color?(pos) || occupied_opp_color?(pos)
-  end
-
-  def occupied_same_color?(pos)
-    x, y = pos
-    @board[x,y] && @board[x, y].color == @color
-  end
-
-  def occupied_opp_color?(pos)
-    x, y = pos
-    @board[x,y] && @board[x, y].color != @color
-  end
-
-  def unoccupied?(pos)
-    x, y = pos
-    @board[x, y].nil?
-  end
-
   def valid_moves
   end
 

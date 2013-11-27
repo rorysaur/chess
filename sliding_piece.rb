@@ -9,13 +9,16 @@ class SlidingPiece < Piece
       x = @pos.first + delta.first
       y = @pos.last + delta.last
 
-      until !@board.on_board?([x, y]) || occupied?([x, y])
+      until !@board.on_board?([x, y]) || @board.occupied?([x, y], @color)
         moves << [x, y]
         x += delta.first
         y += delta.last
       end
 
-      moves << [x, y] if @board.on_board?([x, y]) && occupied_opp_color?([x, y])
+      if @board.on_board?([x, y]) && @board.occupied_opp_color?([x, y], @color)
+        moves << [x, y]
+      end
+
     end
 
     moves

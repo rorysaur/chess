@@ -25,18 +25,18 @@ class Pawn < Piece
     if @pos.first == INITIAL_ROW[@color]
       x = @pos.first + first_move.first
       y = @pos.last + first_move.last
-      moves << [x, y] unless occupied?([(x - multiplier), y])
+      moves << [x, y] unless @board.occupied?([(x - multiplier), y], @color)
     end
 
     capture_moves.each do |delta|
       x = @pos.first + delta.first
       y = @pos.last + delta.last
-      moves << [x, y] if occupied_opp_color?([x, y])
+      moves << [x, y] if @board.occupied_opp_color?([x, y], @color)
     end
 
     x = @pos.first + normal_move.first
     y = @pos.last + normal_move.last
-    moves << [x, y] unless occupied?([x, y])
+    moves << [x, y] unless @board.occupied?([x, y], @color)
 
     moves
   end

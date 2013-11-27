@@ -4,12 +4,17 @@ class Game
 
   def initialize
     @board = Board.new
+    @board.place_pieces
   end
 
   def play
 
     while true
       @board.display
+      puts "Black in check? #{@board.in_check?(:black)}"
+      puts "Black checkmated? #{@board.checkmate?(:black)}"
+      puts "White in check? #{@board.in_check?(:white)}"
+      puts "White checkmated? #{@board.checkmate?(:white)}"
 
       begin
         puts "Move: ( Ex: 7,1 5,2 )"
@@ -21,6 +26,9 @@ class Game
         puts e
         retry
       rescue InvalidMoveError => e
+        puts e
+        retry
+      rescue => e
         puts e
         retry
       end

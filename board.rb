@@ -9,7 +9,6 @@ class Board
 
   def initialize
     @grid = Array.new(8) { Array.new(8, nil) }
-    place_pieces
   end
 
   # private
@@ -92,6 +91,10 @@ class Board
     x.between?(0,7) && y.between?(0,7)
   end
 
+  def pieces
+    @grid.flatten.compact
+  end
+
   def move(from, to)
     from_x, from_y = from
     to_x, to_y = to
@@ -101,9 +104,27 @@ class Board
     if piece.nil?
       raise InvalidMoveError.new("There is no piece at that position.")
     elsif !piece.moves.include?(to)
-      piece.show_moves
       raise InvalidMoveError.new("Invalid move.")
-    elsif piece.moves.include?(to)
+      piece.show_valid_moves
+    elsif !piece.valid_moves.include?(to)
+      raise InvalidMoveError.new("Can't move into check.")
+      piece.show_valid_moves
+    elsif piece.valid_moves.include?(to)
+      self[to_x, to_y] = self[from_x, from_y]
+      self[from_x, from_y] = nil
+      piece.pos = to
+    end
+  end
+
+  def move!(from, to)
+    from_x, from_y = from
+    to_x, to_y = to
+
+    piece = self[from_x, from_y]
+
+    if piece.nil?
+      raise InvalidMoveError.new("There is no piece at that position.")
+    else
       self[to_x, to_y] = self[from_x, from_y]
       self[from_x, from_y] = nil
       piece.pos = to
@@ -129,7 +150,7 @@ class Board
 
     @grid.each_index do |x|
       @grid[x].each_index do |y|
-        duped_board[x, y] = self[x, y].dup if self[x, y]
+        duped_board[x, y] = self[x, y].dup(duped_board) if self[x, y]
       end
     end
 
@@ -137,9 +158,32 @@ class Board
   end
 
   def in_check?(color)
+    king_pos = find_king(color)
+
+    self.pieces.each do |piece|
+      if piece.color != color && piece.moves.include?(king_pos)
+        return true
+      end
+    end
+
+    false
+  end
+
+  def find_king(color)
+    self.pieces.each do |piece|
+      if piece.is_a?(King) && piece.color == color
+        return piece.pos
+      end
+    end
   end
 
   def checkmate?(color)
+    own_pieces = self.pieces.select { |piece| piece.color == color }
+
+    own_pieces.each do |own_piece|
+    end
+
+    in_check?(color) && own_pieces.all? { |piece| piece.valid_moves.empty? }
   end
 
   def display

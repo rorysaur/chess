@@ -15,12 +15,30 @@ class Piece
   end
 
   def valid_moves
+    invalid_moves = []
+
+    moves.each do |move|
+      invalid_moves << move if move_into_check?(move)
+    end
+
+    moves - invalid_moves
+  end
+
+  def move_into_check?(to_pos)
+    board_copy = @board.dup
+
+    board_copy.move!(@pos, to_pos)
+    board_copy.in_check?(@color)
   end
 
   def to_s
   end
 
-  def show_moves
+  def dup(board)
+    self.class.new(@pos, { :color => @color, :board => board } )
+  end
+
+  def show_valid_moves
     board_copy = @board.dup
     moves.each do |pos|
       x, y = pos

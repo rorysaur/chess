@@ -1,4 +1,6 @@
 load 'pieces.rb'
+require_relative 'errors'
+require 'colorize'
 
 # -*- coding: utf-8 -*-
 
@@ -15,19 +17,19 @@ class Board
     back_row = [Rook, Knight, Bishop, Queen, King, Bishop, Knight, Rook]
 
     back_row.each_with_index do |piece_class, index|
-      self[0, index] = piece_class.new([0, index], :white, self)
+      self[0, index] = piece_class.new([0, index], :black, self)
     end
 
     8.times do |y|
-      self[1, y] = Pawn.new([1, y], :white, self)
+      self[1, y] = Pawn.new([1, y], :black, self)
     end
 
     8.times do |y|
-      self [6, y] = Pawn.new([6, y], :black, self)
+      self [6, y] = Pawn.new([6, y], :white, self)
     end
 
     back_row.each_with_index do |piece_class, index|
-      self[7, index] = piece_class.new([7, index], :black, self)
+      self[7, index] = piece_class.new([7, index], :white, self)
     end
   end
 
@@ -48,40 +50,28 @@ class Board
     @grid.flatten.compact
   end
 
-  def move(from, to)
-    from_x, from_y = from
-    to_x, to_y = to
+  def move(from_pos, to_pos, turn)
+    from_x, from_y = from_pos
+    to_x, to_y = to_pos
 
     piece = self[from_x, from_y]
 
-    if piece.nil?
-      raise InvalidMoveError.new("There is no piece at that position.")
-    elsif !piece.moves.include?(to)
-      piece.show_valid_moves
-      raise InvalidMoveError.new("Invalid move.")
-    elsif !piece.valid_moves.include?(to)
-      piece.show_valid_moves
-      raise InvalidMoveError.new("Can't move into check.")
-    elsif piece.valid_moves.include?(to)
-      self[to_x, to_y] = self[from_x, from_y]
-      self[from_x, from_y] = nil
-      piece.pos = to
-    end
+    validate_move(piece, to_pos, turn)
+
+    self[to_x, to_y] = self[from_x, from_y]
+    self[from_x, from_y] = nil
+    piece.pos = to_pos
   end
 
-  def move!(from, to)
-    from_x, from_y = from
-    to_x, to_y = to
+  def move!(from_pos, to_pos)
+    from_x, from_y = from_pos
+    to_x, to_y = to_pos
 
     piece = self[from_x, from_y]
 
-    if piece.nil?
-      raise InvalidMoveError.new("There is no piece at that position.")
-    else
-      self[to_x, to_y] = self[from_x, from_y]
-      self[from_x, from_y] = nil
-      piece.pos = to
-    end
+    self[to_x, to_y] = self[from_x, from_y]
+    self[from_x, from_y] = nil
+    piece.pos = to_pos
   end
 
   def occupied?(pos, color)
@@ -122,14 +112,6 @@ class Board
     false
   end
 
-  def find_king(color)
-    self.pieces.each do |piece|
-      if piece.is_a?(King) && piece.color == color
-        return piece.pos
-      end
-    end
-  end
-
   def checkmate?(color)
     own_pieces = self.pieces.select { |piece| piece.color == color }
 
@@ -140,9 +122,9 @@ class Board
   end
 
   def display
-    puts "  " + ('0'..'7').to_a.join(" ")
+    puts "  " + ('a'..'h').to_a.join(" ")
     @grid.each_index do |x|
-      print "#{x} "
+      print "#{8 - x} "
       @grid[x].each_index do |y|
         if self[x,y].nil?
           print "_ "
@@ -150,34 +132,38 @@ class Board
           print self[x,y].to_s
         end
       end
-      print "\n"
+      print "#{8 - x} \n"
+    end
+    puts "  " + ('a'..'h').to_a.join(" ")
+  end
+
+
+  private
+
+  def validate_move(piece, to_pos, turn)
+
+    if piece.nil?
+      raise InvalidMoveError.new("There is no piece at that position.")
+    elsif piece.color != turn
+      raise InvalidMoveError.new("Can't move opponent's piece.")
+    elsif !piece.moves.include?(to_pos)
+      piece.show_valid_moves
+      raise InvalidMoveError.new("Invalid move.")
+    elsif !piece.valid_moves.include?(to_pos)
+      piece.show_valid_moves
+      raise InvalidMoveError.new("Can't move into check.")
+    end
+
+    true
+  end
+
+  def find_king(color)
+    self.pieces.each do |piece|
+      if piece.is_a?(King) && piece.color == color
+        return piece.pos
+      end
     end
   end
 
 end
 
-# b = Board.new
-# b.place_pieces
-# b.display
-# b.move([7,1], [5,2])
-# b.display
-# b.move([5,2], [6,2])
-# b.display
-
-# p1 = Queen.new([4,4], { :color => :black, :board => b })
-# b[4,4] = p1
-# p2 = Queen.new([4,1], { :color => :white, :board => b })
-# b[4,1] = p2
-# p3 = Queen.new([2,2], { :color => :white, :board => b })
-# b[2,2] = p3
-# p1.show_moves
-# p p1.moves
-
-
-
-# r = Rook.new([3,3], { :color => :black, :board => b })
-# b[3,3] = r
-# b.display
-# p r.color
-# p r.pos
-# p r.board

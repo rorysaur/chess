@@ -1,6 +1,3 @@
-class InvalidMoveError < StandardError
-end
-
 class Piece
 
   attr_accessor :color, :pos, :board, :moves
@@ -24,13 +21,6 @@ class Piece
     moves - invalid_moves
   end
 
-  def move_into_check?(to_pos)
-    board_copy = @board.dup
-
-    board_copy.move!(@pos, to_pos)
-    board_copy.in_check?(@color)
-  end
-
   def to_s
   end
 
@@ -46,6 +36,16 @@ class Piece
     end
 
     board_copy.display
+  end
+
+
+  private
+
+  def move_into_check?(to_pos)
+    board_copy = @board.dup
+
+    board_copy.move!(@pos, to_pos)
+    board_copy.in_check?(@color)
   end
 end
 

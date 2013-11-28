@@ -16,6 +16,6 @@ class King < SteppingPiece
   ]
 
   def to_s
-    @color == :white ? "♔ " : "♚ "
+    @color == :white ? "♚ " : "♔ "
   end
 end

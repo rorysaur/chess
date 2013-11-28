@@ -7,13 +7,13 @@ class Pawn < Piece
   MOVE_DELTA = [1, 0]
   FIRST_MOVE_DELTA = [2, 0]
   CAPTURE_DELTAS = [[1, 1], [1, -1]]
-  INITIAL_ROW = { :white => 1, :black => 6 }
+  INITIAL_ROW = { :white => 6, :black => 1 }
 
 
   def moves
     moves = []
 
-    multiplier = @color == :white ? 1 : -1
+    multiplier = @color == :white ? -1 : 1
 
     normal_move = MOVE_DELTA.map { |i| i * multiplier }
     first_move = FIRST_MOVE_DELTA.map { |i| i * multiplier }
@@ -45,6 +45,6 @@ class Pawn < Piece
   end
 
   def to_s
-    @color == :white ? "♙ " : "♟ "
+    @color == :white ? "♟ " : "♙ "
   end
 end

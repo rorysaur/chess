@@ -16,7 +16,7 @@ class Knight < SteppingPiece
   ]
 
   def to_s
-    @color == :white ? "♘ " : "♞ "
+    @color == :white ? "♞ " : "♘ "
   end
 
 

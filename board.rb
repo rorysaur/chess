@@ -7,6 +7,8 @@ require 'colorize'
 
 class Board
 
+  BOARD_SIZE = 8
+
   attr_accessor :grid
 
   def initialize
@@ -114,27 +116,28 @@ class Board
 
   def checkmate?(color)
     own_pieces = self.pieces.select { |piece| piece.color == color }
-
-    own_pieces.each do |own_piece|
-    end
-
     in_check?(color) && own_pieces.all? { |piece| piece.valid_moves.empty? }
   end
 
   def display
-    puts "  " + ('a'..'h').to_a.join(" ")
+    square_color = :red
+
+    puts "  " + ('a'..'h').to_a.join(" ").colorize(:white)
     @grid.each_index do |x|
-      print "#{8 - x} "
+      print "#{8 - x} ".colorize(:white)
       @grid[x].each_index do |y|
         if self[x,y].nil?
-          print "_ "
+          print "  ".colorize(:background => square_color)
         else
-          print self[x,y].to_s
+          print (self[x,y].to_s).colorize(:color => :white,
+            :background => square_color)
         end
+        square_color = square_color == :red ? :black : :red
       end
-      print "#{8 - x} \n"
+      print " #{8 - x} \n".colorize(:white)
+      square_color = square_color == :red ? :black : :red
     end
-    puts "  " + ('a'..'h').to_a.join(" ")
+    puts "  " + ('a'..'h').to_a.join(" ").colorize(:white)
   end
 
 
